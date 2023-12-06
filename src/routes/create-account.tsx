@@ -4,8 +4,7 @@ import { auth } from "./firebase";
 import { Link, useNavigate } from "react-router-dom"; 
 import { Error, Form, Input, Switcher, Title, Wrapper } from "../components/auth-components";
 import GithubButton from "../components/github-btn"; 
-import styled from "styled-components"; // Check if the import statement is correct 
-import { isEmailDuplicated } from '../components/utils';
+import styled from "styled-components";  
 
 
 const EamilBox = styled.div`
@@ -26,7 +25,7 @@ const EmailButton = styled.button`
     }
 `;
 const EmailError = styled.div`
-    color: tomato;
+    color: red;
     &.green-text{
         color: green;
     }
@@ -69,7 +68,7 @@ export default function CreateAccount(){
                 setNameError(false);
             }
         }else if(name == 'email'){
-            setEmail(value);
+            setEmail(value); 
         }else if(name == 'passwordConfirm'){
             setPasswordConfirm(value);
             if(password !== value){
@@ -98,6 +97,8 @@ export default function CreateAccount(){
             }
             if(email === ''){ 
                 setEmailError(true);
+                setEmailError(true);
+                setEmailMsg('이메일을 입력해주세요')
             }
             if(password === ''){ 
                 setPassowrdError(true);
@@ -123,21 +124,51 @@ export default function CreateAccount(){
             setLoading(false);
         }
      };
+     
+
 
     //  이메일 중복체크
-    const onEmailCheck = async (e:React.MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault(); 
-        const duplicated = await isEmailDuplicated(email);
-        setEmailError(duplicated || false);
-        if(emailError){
-            setEmailMsg('중복된 이메일 입니다');
-            setGreenText('');
-        }else{
-            setEmailError(true);
-            setEmailMsg('사용 가능한 이메일 입니다');
-            setGreenText('green-text');
+    const onEmailCheck = async (e:React.MouseEvent<HTMLButtonElement>) => {e.preventDefault();
+
+        // Check if the email is empty
+        if (isLoading || email === '') {
+          setEmailError(true);
+          setEmailMsg('이메일을 입력해주세요');
+          return;
         }
-    }
+    
+        try {
+          setLoading(true);
+    
+          // Attempt to create a temporary user
+          await createUserWithEmailAndPassword(auth, email, 'someDummyPassword');
+          // If successful, delete the temporary user and handle as duplicate email
+          auth.currentUser && await auth.currentUser.delete();
+    
+          // Email is not duplicated if we reach here
+          setEmailError(true);
+          setEmailMsg('사용 가능한 이메일입니다.');
+          setGreenText('green-text');
+        } catch (error: unknown) {
+          // Check if the error is due to email already in use
+          if (error != null && isAuthError(error)) {
+            // Email is already registered
+            // console.log(error);
+            setEmailError(true);
+            setEmailMsg('이미 등록된 이메일입니다.');
+            setGreenText('');
+          } else {
+            // Handle other errors if needed
+            console.error('Error checking email:', error);
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+     
+      function isAuthError(obj: unknown): obj is { code: string } {
+        return typeof obj === 'object' && obj !== null && (obj as Record<string, unknown>).code !== undefined;
+      }
 
 
     return (

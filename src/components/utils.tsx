@@ -10,7 +10,7 @@ export const isEmailDuplicated = async (email:string) => {
     const createUser = await createUserWithEmailAndPassword(auth, email, 'someDummyPassword');
     if(createUser){
       auth.currentUser?.delete().then(() =>{
-        console.log('create and delete')
+        console.log('create and delete', email);
         return false;
       }).catch((error) =>{
         console.log('deleteError', error);

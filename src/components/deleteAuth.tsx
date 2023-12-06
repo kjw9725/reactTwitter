@@ -1,7 +1,6 @@
 import styled from "styled-components"
 import { auth } from "../routes/firebase";
-import { deleteUser } from "firebase/auth";
-import { useNavigate } from "react-router-dom";  
+import { deleteUser, signOut } from "firebase/auth"; 
 
 const DeleteAuthButton = styled.button`
     background-color: tomato;
@@ -18,16 +17,23 @@ const DeleteAuthButton = styled.button`
     `;
 
 
-export default function DeleteAuth(){
-    const navigate = useNavigate();
+export default function DeleteAuth(){ 
 
     const deleteAuth = async () =>{
-        const ok = confirm('계정을 삭제 하시겠습니까?');  
+        const ok = confirm('계정을 삭제하시려면 패스워드를 입력해주세요');
         const userAuth = auth.currentUser; 
-        if(!ok) return;
- 
-         deleteUser(userAuth!);    
-     navigate('/');   
+        try{ 
+            if(!ok) return; 
+            else{ 
+                if(userAuth){
+                    await deleteUser(userAuth);
+                    await signOut(auth);
+                    window.location.replace('/');
+                }
+            }
+        }catch(error){
+            console.log('deleteError', error);
+        }
     }
 
 
