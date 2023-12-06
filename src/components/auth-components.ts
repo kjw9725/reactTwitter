@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-height:100%;
-display:flex;
-flex-direction: column;
-align-items: center;
-width: 420px;
-padding: 50px 0px;
+height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 420px;
+    padding: 50px 0px; 
 `; 
 export const Form = styled.form`
 margin-top: 50px;

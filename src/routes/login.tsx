@@ -16,15 +16,15 @@ export default function Login(){
     const [error, setError] = useState('');
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
-        const {target: {name, value} } = e; 
+        const {target: {name, value} } = e;
         if(name == 'email'){
             setEmail(value);
         }else{
             setPassword(value);
         }
      }
-     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) =>{
-        e.preventDefault(); 
+     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setError('');
         
         if(isLoading || email ==='' || password ==='') return;
@@ -32,8 +32,8 @@ export default function Login(){
             setLoading(true); 
             await signInWithEmailAndPassword(auth, email, password);
             navigate("/");
-        } catch(e){
-            setError(e.message);
+        } catch{ 
+            console.log('error')
         }finally {
             setLoading(false);
         }

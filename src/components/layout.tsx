@@ -5,11 +5,15 @@ import { auth } from "../routes/firebase";
 const Wrapper = styled.div`
     display:grid;
     gap: 50px;
-    grid-template-columns: 1fr 4fr;
+    grid-template-columns: 1fr 4fr; 
     padding: 50px 0;
     width: 100%;
     height: 100%;
     max-width: 860px;
+    @media only screen and (max-width: 720px) {
+        gap: 0;
+        padding-right: 20px;
+    }
 `;
 const Menu = styled.div`
     display: flex;

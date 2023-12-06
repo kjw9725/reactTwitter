@@ -45,9 +45,9 @@ const GlobalStyles = createGlobalStyle`
   body{
     background-color: black;
     color: white;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'segoe UI',
-    Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', Helevetica Neue',
-    sans-serif;
+    font-family: 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'segoe UI',
+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helevetica Neue',
+    'sans-serif';
   }
 `;
 const Wrapper = styled.div`
