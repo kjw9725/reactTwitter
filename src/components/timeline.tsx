@@ -6,12 +6,12 @@ import Tweet from "./tweet";
 import { Unsubscribe } from "firebase/auth";
 
 export interface ITweet{
-    id: string,
+    id: string;
     photo?: string;
     tweet: string;
     userId: string;
     username: string;
-    createdAt: number
+    createdAt: number;
 }
 
 const Wrapper = styled.div`
@@ -30,24 +30,23 @@ export default function Timeline(){
                 collection(db, "tweets"),
                 orderBy("createdAt", "desc"),
                 limit(25)
-            ); 
+            );
     
-            unsubscribe = await onSnapshot(tweetsQuery, (snapshot)=>{ 
-                const tweets = snapshot.docs.map((doc) => {  
-                    const {tweet, createdAt, userId, username, photo} = doc.data();   
+            unsubscribe = await onSnapshot(tweetsQuery, (snapshot) => {
+                const tweets = snapshot.docs.map((doc) => {
+                    const {tweet, createdAt, userId, username, photo} = doc.data();
                     return {
                         tweet,
                         createdAt,
                         userId,
-                        username,  
+                        username,
                         photo,
                         id: doc.id
                     };
                 });
-                setTweet(tweets); 
+                setTweet(tweets);
                 console.log(tweets);
-            }) 
-            
+            })
         };
         fetchTweets();
         return () =>{

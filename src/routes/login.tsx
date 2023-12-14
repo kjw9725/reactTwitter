@@ -1,5 +1,5 @@
-import { useState } from "react"; 
-import { auth } from "./firebase";  
+import { useState } from "react";
+import { auth } from "./firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Error, Form, Input, Switcher, Title, Wrapper } from "../components/auth-components";
@@ -10,33 +10,33 @@ import GithubButton from "../components/github-btn";
 
 export default function Login(){
     const navigate = useNavigate();
-    const [isLoading, setLoading] = useState(false); 
+    const [isLoading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(false);
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {target: {name, value} } = e;
         if(name == 'email'){
             setEmail(value);
         }else{
             setPassword(value);
         }
-     }
-     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault(); 
+    }
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         
         if(isLoading || email ==='' || password ==='') return;
         try{
-            setLoading(true); 
+            setLoading(true);
             await signInWithEmailAndPassword(auth, email, password);
             navigate("/");
-        } catch{  
+        } catch{
             setError(true);
         }finally {
             setLoading(false);
         }
-     };
+    };
 
 
     return (

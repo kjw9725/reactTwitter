@@ -7,6 +7,7 @@ import { collection, doc, getDocs, limit, onSnapshot, orderBy, query, updateDoc,
 import { ITweet } from "../components/timeline";
 import Tweet from "../components/tweet";
 import DeleteAuth from "../components/deleteAuth";
+import PasswordChange from "../components/passwordChange";
 
 
 const Wrapper = styled.div`
@@ -20,7 +21,6 @@ const AvatarUpload = styled.label`
     overflow: hidden;
     height: 80px;
     border-radius: 50%;
-    background-color: #1d9bf0;
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -90,6 +90,11 @@ const CancelButton = styled.button`
         background-color: #1d9bf0;
         color: white;
     }
+    `;
+
+    const DisplayFlex = styled.div`
+        display: flex;
+        gap: 10px;
     `;
 
 
@@ -233,7 +238,10 @@ export default function Profile(){
             <Tweets>
                 {tweets.map((tweet) => <Tweet key={tweet.id} {...tweet} />)}
             </Tweets>
-            <DeleteAuth />
+            <DisplayFlex>
+                <PasswordChange />
+                <DeleteAuth />
+            </DisplayFlex>
         </Wrapper>
     )
 }

@@ -54,11 +54,11 @@ export default function CreateAccount(){
     // 이메일 중복체크 메시지
     const [emailMsg, setEmailMsg] = useState('');
 
-    const [greenText, setGreenText] = useState('')
+    const [greenText, setGreenText] = useState('');
     
     const navigate = useNavigate();
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {target: {name, value} } = e;
         if(name == 'name'){
             setName(value);   
@@ -85,8 +85,8 @@ export default function CreateAccount(){
                 setPassowrdError(false);
             }
         }
-     }
-     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    }
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(''); 
 
@@ -117,20 +117,19 @@ export default function CreateAccount(){
                 displayName: name,
             })
             navigate('/');
-        } catch(e) { 
-            // setError(e); 
+        } catch(e) {  
             console.log(e);
         }finally {
             setLoading(false);
         }
-     };
+    };
      
 
 
     //  이메일 중복체크
-    const onEmailCheck = async (e:React.MouseEvent<HTMLButtonElement>) => {e.preventDefault();
-
-        // Check if the email is empty
+    const onEmailCheck = async (e:React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+ 
         if (isLoading || email === '') {
           setEmailError(true);
           setEmailMsg('이메일을 입력해주세요');
@@ -139,36 +138,29 @@ export default function CreateAccount(){
     
         try {
           setLoading(true);
-    
-          // Attempt to create a temporary user
-          await createUserWithEmailAndPassword(auth, email, 'someDummyPassword');
-          // If successful, delete the temporary user and handle as duplicate email
+          
+          await createUserWithEmailAndPassword(auth, email, 'someDummyPassword'); 
           auth.currentUser && await auth.currentUser.delete();
-    
-          // Email is not duplicated if we reach here
+     
           setEmailError(true);
           setEmailMsg('사용 가능한 이메일입니다.');
           setGreenText('green-text');
-        } catch (error: unknown) {
-          // Check if the error is due to email already in use
-          if (error != null && isAuthError(error)) {
-            // Email is already registered
-            // console.log(error);
+        } catch (error: unknown) { 
+          if (error != null && isAuthError(error)) { 
             setEmailError(true);
             setEmailMsg('이미 등록된 이메일입니다.');
             setGreenText('');
-          } else {
-            // Handle other errors if needed
+          } else { 
             console.error('Error checking email:', error);
           }
         } finally {
           setLoading(false);
         }
-      };
+    };
      
-      function isAuthError(obj: unknown): obj is { code: string } {
+    function isAuthError(obj: unknown): obj is { code: string } {
         return typeof obj === 'object' && obj !== null && (obj as Record<string, unknown>).code !== undefined;
-      }
+    }
 
 
     return (
