@@ -3,7 +3,8 @@ import { ITweet } from "./timeline";
 import { auth, db, storage } from "../routes/firebase"; 
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
     display: grid;
@@ -33,6 +34,7 @@ const Photo = styled.img`
 const Username = styled.span`
     font-weight: 600;
     font-size: 15px;
+    cursor: pointer;
 `;
 
 const Payload = styled.p`
@@ -144,9 +146,30 @@ right: 10px;
 font-size: 14px;
 `;
 
+const DisplayFlex = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+`;
 
+const Avatar = styled.div`
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    svg{
+        width: 30px;
+    }`;
+    
 
-
+const AvatarImg = styled.img`
+    width: 100%;
+    height: 100%;
+`;
 
 export default function Tweet({username, photo, tweet, userId, id }:ITweet){
     const [isEdit, setEdit] = useState(false);
@@ -155,8 +178,24 @@ export default function Tweet({username, photo, tweet, userId, id }:ITweet){
     const [editPhoto, setEditPhoto] = useState<File | null> (null);
     const [showPhoto, setShowphoto] = useState(photo);
     const [testCount, setTextCount] = useState(tweet.length);
+    const [avatar, setAvatar] = useState('');
+     
+    const navigation = useNavigate();
 
-    const user = auth.currentUser; 
+    const user = auth.currentUser;
+
+    useEffect(() => {
+        const avatarImporter = async() => {
+            const avatarRef = await ref(storage, `avartars/${userId}`);
+            try{    
+                const avatarImg = await getDownloadURL(avatarRef);
+                setAvatar(avatarImg);
+            } catch {
+                setAvatar('');
+            }
+        }
+        avatarImporter();
+    }, [userId])
     const onDelete = async() => {
         const ok = confirm('해당 트윗을 삭제 하시겠습니까?');
         if(!ok || user?.uid !== userId) return;
@@ -191,7 +230,6 @@ export default function Tweet({username, photo, tweet, userId, id }:ITweet){
     const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {files} = e.target;
 
-        console.log({files});
 
         if(files && files.length === 1){
             if(files[0].size < 1048576){
@@ -246,11 +284,11 @@ export default function Tweet({username, photo, tweet, userId, id }:ITweet){
                 tweet: editTweet,
             });
             // 이미지가 있을경우 해당 이미지도 삭제 및 새 이미지 저장
-            if(editPhoto){ 
-                if(photo){ 
+            if(editPhoto){
+                if(photo){
                     const onriginRef = ref(storage, `tweets/${user.uid}/${id}`);
-                    await deleteObject(onriginRef); 
-                } 
+                    await deleteObject(onriginRef);
+                }
 
                 const photoRef = ref(storage, `tweets/${user.uid}/${id}`);
                 const result = await uploadBytes(photoRef, editPhoto);
@@ -264,8 +302,11 @@ export default function Tweet({username, photo, tweet, userId, id }:ITweet){
         }finally{
             setEdit(false);
         }
-    } 
-
+    }
+    const goProfile = () => {
+        // console.log('/profile?' + userId)
+        navigation(`/profile?${userId}`);
+    }
     
     // const onSubmit = async(e:React.FormEvent<HTMLFormElement>) => {
     //     e.preventDefault();
@@ -298,7 +339,14 @@ export default function Tweet({username, photo, tweet, userId, id }:ITweet){
         ) : (
         <Wrapper>
         <Column>
-            <Username>{username}</Username>
+            <DisplayFlex>
+                <Avatar onClick={goProfile} >
+                        {avatar ? (<AvatarImg src={avatar}/>) : (<svg fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>)}
+                </Avatar>
+                <Username onClick={goProfile}>{username}</Username>
+            </DisplayFlex>
             <Payload>{tweet && ( <div dangerouslySetInnerHTML={{ __html: tweet.replace(/\n/g, '<br />') }} /> )}</Payload>
             {user?.uid === userId ? <DeleteButton onClick={onDelete}>Delete</DeleteButton> : null}
             {user?.uid === userId ? <EditButton onClick={onEditMode}>Edit</EditButton> : null}

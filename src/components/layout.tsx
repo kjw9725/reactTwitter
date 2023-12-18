@@ -1,6 +1,6 @@
 import {Link, Outlet, useNavigate} from "react-router-dom"; 
 import styled from "styled-components";
-import { auth } from "../routes/firebase";
+import { auth } from "../routes/firebase"; 
 
 const Wrapper = styled.div`
     display:grid;
@@ -43,7 +43,8 @@ const MenuItem = styled.div`
     }
 `;
 
-export default function Layout(){
+export default function Layout(){ 
+
     const navigate = useNavigate();
     const onLogOut = async () =>{
         const ok = confirm("Are you sure want to log out?");
