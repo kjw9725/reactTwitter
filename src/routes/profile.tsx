@@ -101,7 +101,6 @@ export default function Profile(){
     const user = auth.currentUser;
     const urlparam = window.location.href.split('?')[1] ? window.location.href.split('?')[1] : user?.uid;
     const [avatar, setAvatar] = useState('');
-    // const [avatar, setAvatar] = useState(user ? user.photoURL : '');
     const [tweets, setTweets] = useState<ITweet[]>([]);
     const [editName, setEditName] = useState('');
     const [isEdit, setEdit] = useState(false);
@@ -125,12 +124,26 @@ export default function Profile(){
             const locationRef = ref(storage, `avartars/${user?.uid}`);
             const result = await uploadBytes(locationRef, file);
             const avatarUrl = await getDownloadURL(result.ref);
+
             setAvatar(avatarUrl);
             await updateProfile(user, {
                 photoURL: avatarUrl
-            })
+            }) 
+
+        
+            //댓글 프로필사진 수정
+            const q = query(collection(db, "comments"), where("userId", "==", user?.uid));
+        
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach(async (data) => { 
+                const commentRef = doc(db, "comments", data.id);
+                const batch = updateDoc(commentRef, {
+                    avatar: avatarUrl
+                });
+                await batch;
+            });
         }
-    }
+    } 
     const onEditName = async() => {
         try{
             await updateProfile(user!, {
@@ -138,7 +151,6 @@ export default function Profile(){
             })
             // 이름변경시 트윗 username을 변경
             userTweetEdit();
-
         }catch(e){
             console.log(e);
         }finally{

@@ -5,10 +5,11 @@ import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Comment from "./comment";
 
 const Wrapper = styled.div`
     display: grid;
-    grid-template-columns: 3fr 1fr;
+    grid-template-columns: 3fr 1fr; 
     padding: 20px;
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 15px;
@@ -155,8 +156,7 @@ const DisplayFlex = styled.div`
 const Avatar = styled.div`
     width: 40px;
     height: 40px;
-    overflow: hidden;
-    border-radius: 50%;
+    overflow: hidden; 
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -351,11 +351,12 @@ export default function Tweet({username, photo, tweet, userId, id }:ITweet){
             {user?.uid === userId ? <DeleteButton onClick={onDelete}>Delete</DeleteButton> : null}
             {user?.uid === userId ? <EditButton onClick={onEditMode}>Edit</EditButton> : null}
         </Column>
-        {photo ?(
-            <Column>
-                <Photo src={photo} />
-            </Column>
-        ): null}
+        <Column>
+            {photo ?(
+                    <Photo src={photo} />
+            ): null}
+        </Column>
+        <Comment tweetId={id} />
         </Wrapper>
         )
         }
