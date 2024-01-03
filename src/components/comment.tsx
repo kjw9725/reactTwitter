@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Avatar, AvatarImg, Input } from './auth-components';
+import { Input } from './auth-components';
 import { auth, db } from '../routes/firebase';
 import {
   addDoc,
@@ -12,7 +12,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { Unsubscribe } from 'firebase/auth';
-import CommentEdit from './commentEdit';
+import CommentData from './commentBox';
 
 interface CommentProps {
   tweetId: string;
@@ -26,6 +26,7 @@ export interface CommentType {
   userId: string;
   displayDate: string;
   id: string;
+  likes: string[];
 }
 
 const ShowComment = styled.div`
@@ -74,10 +75,6 @@ const ConfirmButton = styled.button`
 `;
 
 const CommentList = styled.div``;
-const Comments = styled.div`
-  border-bottom: 1px solid #ffffff54;
-  padding-bottom: 18px;
-`;
 
 const Comment: React.FC<CommentProps> = (props) => {
   const { tweetId } = props;
@@ -112,6 +109,7 @@ const Comment: React.FC<CommentProps> = (props) => {
             text,
             tweetId,
             displayDate,
+            likes,
           } = doc.data();
           return {
             name,
@@ -122,6 +120,7 @@ const Comment: React.FC<CommentProps> = (props) => {
             text,
             id: doc.id,
             displayDate,
+            likes,
           };
         });
         setCommentList(data);
@@ -146,7 +145,7 @@ const Comment: React.FC<CommentProps> = (props) => {
     const month = now.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
     const day = now.getDate();
     const hours = now.getHours();
-    const minutes = now.getMinutes();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
 
     return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
   };
@@ -163,6 +162,7 @@ const Comment: React.FC<CommentProps> = (props) => {
           text: comment,
           createdAt: Date.now(),
           displayDate: nowDate,
+          likes: [],
         });
       } catch (e) {
         console.log(e);
@@ -188,41 +188,7 @@ const Comment: React.FC<CommentProps> = (props) => {
 
           <CommentList>
             {commentList.map((list) => {
-              return (
-                <Comments key={list.id}>
-                  <DisplayFlex className="justify-between">
-                    <DisplayFlex className="align-center">
-                      <Avatar>
-                        {list.avatar ? (
-                          <AvatarImg
-                            src={list.avatar}
-                            alt="avatar"
-                            className="avatar"
-                          />
-                        ) : (
-                          <svg
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={1.5}
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                            />
-                          </svg>
-                        )}
-                      </Avatar>
-                      <div className="user-name">{list.name}</div>
-                    </DisplayFlex>
-                    <span className="font12">{list.displayDate}</span>
-                  </DisplayFlex>
-                  <CommentEdit list={list} />
-                </Comments>
-              );
+              return <CommentData key={list.id} list={list} />;
             })}
           </CommentList>
         </CommentBox>

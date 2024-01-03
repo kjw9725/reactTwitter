@@ -1,21 +1,19 @@
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { auth, db } from '../routes/firebase';
 import { Column, ConfirmButton, TextArea } from './auth-components';
-import Replies from './replies';
 
-export type ListType = {
+type replyType = {
   list: {
-    avatar: string;
     name: string;
+    avatar: string;
     text: string;
     createdAt: number;
-    tweetId: string;
+    commentId: string;
     userId: string;
     displayDate: string;
     id: string;
-    likes: string[];
   };
 };
 
@@ -66,12 +64,16 @@ const EditButton = styled.button`
   }
 `;
 
-const CommentEdit: React.FC<ListType> = (props) => {
+const ReplyEdit: React.FC<replyType> = (props) => {
   const { list } = props;
 
   const [isEdit, setIsEdit] = useState(false);
   const [changeComment, setChangeComment] = useState(list.text);
   const user = auth.currentUser;
+
+  useEffect(() => {
+    console.log('replyEdit', list);
+  });
 
   const onCancel = () => {
     setIsEdit(false);
@@ -82,7 +84,7 @@ const CommentEdit: React.FC<ListType> = (props) => {
     const commentId = eventTarget.value;
     try {
       // uid가 로그인된 아이디와 일치하면 db안에 해당 트윗을 삭제
-      await deleteDoc(doc(db, 'comments', commentId));
+      await deleteDoc(doc(db, 'replies', commentId));
     } catch (e) {
       console.log(e);
     }
@@ -90,7 +92,7 @@ const CommentEdit: React.FC<ListType> = (props) => {
 
   const onEditMode = async () => {
     if (isEdit) {
-      const userDoc = doc(db, 'comments', list.id);
+      const userDoc = doc(db, 'replies', list.id);
 
       if (user?.uid !== list.userId) return;
 
@@ -124,7 +126,7 @@ const CommentEdit: React.FC<ListType> = (props) => {
       ) : (
         <Column>
           <TextBox>{list.text}</TextBox>
-          {user?.uid == list.userId ? null : <Replies list={list} />}
+          {/* {user?.uid == list.userId ? null : <Replies list={list} />} */}
         </Column>
       )}
       {user?.uid == list.userId && isEdit == false ? (
@@ -135,10 +137,9 @@ const CommentEdit: React.FC<ListType> = (props) => {
             </DeleteButton>
             <EditButton onClick={onEditMode}>Edit</EditButton>
           </DisplayFlex>
-          <Replies list={list} />
         </Column>
       ) : null}
     </>
   );
 };
-export default CommentEdit;
+export default ReplyEdit;

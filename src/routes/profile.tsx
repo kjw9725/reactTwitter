@@ -142,21 +142,24 @@ export default function Profile() {
         photoURL: avatarUrl,
       });
 
-      //댓글 프로필사진 수정
-      const q = query(
-        collection(db, 'comments'),
-        where('userId', '==', user?.uid),
-      );
-
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach(async (data) => {
-        const commentRef = doc(db, 'comments', data.id);
-        const batch = updateDoc(commentRef, {
-          avatar: avatarUrl,
-        });
-        await batch;
-      });
+      //댓글(comments), 답글(replies) 프로필사진 수정
+      photoEditor('comments', avatarUrl);
+      photoEditor('replies', avatarUrl);
     }
+  };
+
+  // 프로필 사진 변경시 댓글, 답글 사진변경 함수
+  const photoEditor = async (dataBase: string, avatarUrl: string) => {
+    const q = query(collection(db, dataBase), where('userId', '==', user?.uid));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(async (data) => {
+      const commentRef = doc(db, dataBase, data.id);
+      const batch = updateDoc(commentRef, {
+        avatar: avatarUrl,
+      });
+      await batch;
+    });
   };
   const onEditName = async () => {
     try {
