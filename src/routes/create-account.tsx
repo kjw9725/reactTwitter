@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth } from './firebase';
-import { Link, useNavigate } from 'react-router-dom';
+import { auth, db } from './firebase';
+import { Link } from 'react-router-dom';
 import {
   Error,
   Form,
@@ -12,6 +12,7 @@ import {
 } from '../components/auth-components';
 import GithubButton from '../components/github-btn';
 import styled from 'styled-components';
+import { addDoc, collection } from 'firebase/firestore';
 
 const EamilBox = styled.div`
   display: flex;
@@ -59,8 +60,6 @@ export default function CreateAccount() {
   const [emailMsg, setEmailMsg] = useState('');
 
   const [greenText, setGreenText] = useState('');
-
-  const navigate = useNavigate();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -131,7 +130,14 @@ export default function CreateAccount() {
       await updateProfile(credentials.user, {
         displayName: name,
       });
-      navigate('/');
+      // users(firestore)에도 유저정보를 추가로 저장
+      await addDoc(collection(db, 'users'), {
+        email: email,
+        userId: auth.currentUser?.uid,
+        displayName: name,
+      });
+      window.location.replace('/');
+      // navigate('/');
     } catch (e) {
       console.log(e);
     } finally {

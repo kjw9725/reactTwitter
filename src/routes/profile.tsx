@@ -166,6 +166,7 @@ export default function Profile() {
       await updateProfile(user!, {
         displayName: editName,
       });
+      updateDisplayName();
       // 이름변경시 트윗 username을 변경
       userTweetEdit();
     } catch (e) {
@@ -174,7 +175,38 @@ export default function Profile() {
       setEdit(false);
     }
   };
+  const updateDisplayName = async () => {
+    try {
+      // Check if a user is currently logged in
+      const currentUser = auth.currentUser;
 
+      if (currentUser) {
+        const currentUserUid = currentUser.uid;
+
+        const usersCollection = collection(db, 'users');
+
+        const q = query(usersCollection, where('userId', '==', currentUserUid));
+
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const documentSnapshot = querySnapshot.docs[0];
+          const userDocRef = doc(usersCollection, documentSnapshot.id);
+          await updateDoc(userDocRef, {
+            displayName: editName,
+          });
+
+          console.log('Display name updated successfully.');
+        } else {
+          console.log('No matching document found.');
+        }
+      } else {
+        console.log('No user is currently logged in.');
+      }
+    } catch (error) {
+      console.error('Error updating display name:', error);
+    }
+  };
   const userTweetEdit = async () => {
     const tweetQuery = query(
       collection(db, 'tweets'),

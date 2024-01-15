@@ -1,7 +1,8 @@
 import { GithubAuthProvider, signInWithPopup } from 'firebase/auth';
 import styled from 'styled-components';
-import { auth } from '../routes/firebase';
+import { auth, db } from '../routes/firebase';
 import { useNavigate } from 'react-router-dom';
+import { addDoc, collection } from 'firebase/firestore';
 
 const Button = styled.span`
   width: 100%;
@@ -29,6 +30,11 @@ export default function GithubButton() {
     // console.log(isSignup);
     const provider = new GithubAuthProvider();
     await signInWithPopup(auth, provider);
+    await addDoc(collection(db, 'users'), {
+      email: auth.currentUser?.email,
+      userId: auth.currentUser?.uid,
+      displayName: auth.currentUser?.displayName,
+    });
     navigate('/');
   };
 

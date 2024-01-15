@@ -1,5 +1,5 @@
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { auth, db } from '../routes/firebase';
 import { Column, ConfirmButton, TextArea } from './auth-components';
@@ -70,10 +70,6 @@ const ReplyEdit: React.FC<replyType> = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [changeComment, setChangeComment] = useState(list.text);
   const user = auth.currentUser;
-
-  useEffect(() => {
-    console.log('replyEdit', list);
-  });
 
   const onCancel = () => {
     setIsEdit(false);

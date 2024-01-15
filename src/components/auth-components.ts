@@ -43,6 +43,9 @@ export const Input = styled.input`
       opacity: 0.8;
     }
   }
+  &.message {
+    border-radius: 0;
+  }
 `;
 export const Title = styled.h1`
   font-size: 42px;
@@ -146,8 +149,8 @@ export const Column = styled.div``;
 export const DisplayFlex = styled.div`
   width: 100%;
   display: flex;
-  gap: 4px;
-  margin-top: 8px;
+  gap: 10px;
+  /* margin-top: 8px; */
   &.align-center {
     align-items: center;
   }
@@ -192,3 +195,134 @@ export const dateCalc = () => {
 
   return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
 };
+
+// 메시지
+
+export const SearchBox = styled.input`
+  width: 100%;
+  height: 48px;
+  border-radius: 25px;
+  font-size: 18px;
+  padding: 0 24px;
+`;
+export const SearchIcon = styled.button`
+  position: absolute;
+  top: 9px;
+  right: 16px;
+  width: 32px;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  svg {
+    width: 26px;
+    color: gray;
+  }
+  &.send {
+    top: 6px;
+    right: 10px;
+  }
+`;
+export const Chatter = styled.form`
+  position: absolute;
+  width: 100%;
+  height: 720px;
+  border: 1px solid #fff;
+  background-color: black;
+`;
+export const ChatBox = styled.div`
+  height: 680px;
+  overflow: auto;
+  .read {
+    margin-bottom: 20px;
+    margin-right: 4px;
+    font-size: 12px;
+  }
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: gray;
+  }
+
+  &::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+  }
+  .left-box {
+    display: flex;
+    width: fit-content;
+    padding: 0 10px;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .right-box {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 10px;
+    align-items: flex-end;
+  }
+  .left {
+    position: relative;
+    background: #00aabb;
+    border-radius: 0.4em;
+    margin-bottom: 20px;
+    margin-top: 4px;
+    padding: 15px;
+  }
+
+  .left:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-right-color: #00aabb;
+    border-left: 0;
+    border-top: 0;
+    margin-top: -5px;
+    margin-left: -10px;
+  }
+  .right {
+    /* width: 50%; */
+    position: relative;
+    background: #00aabb;
+    border-radius: 0.4em;
+    margin: 20px 0;
+    padding: 15px;
+    text-align: right;
+  }
+
+  .right:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-left-color: #00aabb;
+    border-right: 0;
+    border-top: 0;
+    margin-top: -5px;
+    margin-right: -10px;
+  }
+`;
+export const Close = styled.div`
+  position: absolute;
+  right: 0;
+  width: 30px;
+  cursor: pointer;
+  z-index: 999;
+`;
+export const PositionBox = styled.div`
+  position: relative;
+  height: fit-content;
+`;

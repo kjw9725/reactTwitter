@@ -1,8 +1,16 @@
 import styled from 'styled-components';
-import { auth } from '../routes/firebase';
+import { auth, db } from '../routes/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import { Error, Input, Title } from './auth-components';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
 
 const DeleteAuthButton = styled.button`
   background-color: tomato;
@@ -65,11 +73,35 @@ export default function DeleteAuth() {
       if (email && password !== null) {
         await signInWithEmailAndPassword(auth, email, password);
         const user = auth.currentUser;
+        usersDelete();
         await user!.delete();
         window.location.replace('/');
       }
     } catch {
       setPasswordError(true);
+    }
+  };
+  const usersDelete = async () => {
+    try {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        const currentUserUid = currentUser.uid;
+        const usersCollection = collection(db, 'users');
+        const q = query(usersCollection, where('userId', '==', currentUserUid));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const documentSnapshot = querySnapshot.docs[0];
+
+          await deleteDoc(doc(usersCollection, documentSnapshot.id));
+        } else {
+          console.log('No matching document found.');
+        }
+      } else {
+        console.log('No user is currently logged in.');
+      }
+    } catch (error) {
+      console.error('Error deleting document:', error);
     }
   };
 
