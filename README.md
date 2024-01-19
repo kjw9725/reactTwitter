@@ -37,5 +37,5 @@ If you are developing a production application, we recommend updating the config
 
 
 
-완성된 페이지
+완성된 페이지: 
 https://react-twitter-28971.firebaseapp.com/profile
