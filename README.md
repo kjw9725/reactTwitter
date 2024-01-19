@@ -28,8 +28,11 @@ If you are developing a production application, we recommend updating the config
 
 구현 기능
 회원가입, 로그인, 로그아웃 깃허브 로그인 및 회원가입
+
 프로필 아이콘 클릭시 자신의 프로필정보 확인가능
+
 트윗 업로드, 최신순으로 화면에 표시 및 댓글, 답글 좋아요기능 프로필사진 클릭시 해당유저의 트윗확인가능
+
 메신저 기능(실시간으로 채팅가능, 최신메신져가 상단에 오게 적용)
 
 
